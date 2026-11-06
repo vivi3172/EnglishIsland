@@ -60,8 +60,9 @@ describe('buildFillQuestion', () => {
     const q = buildFillQuestion(items[0], items, seeded(4))
     expect(q.options).toHaveLength(4)
     expect(new Set(q.options).size).toBe(4)
-    expect(q.options).toContain('help')
-    expect(q.answer).toBe('help')
+    const answer = items[0].answer.toLowerCase()
+    expect(q.options).toContain(answer)
+    expect(q.answer).toBe(answer)
   })
 })
 

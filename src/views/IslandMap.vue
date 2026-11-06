@@ -30,8 +30,8 @@ function select(zone) {
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="story-title">
         <div class="eyebrow">INCIDENT REPORT · 事故紀錄</div>
         <h2 id="story-title" class="modal-title">船難後第 1 天</h2>
-        <p>暴風雨打翻了你的船。你在一片陌生的沙灘上醒來，四周只有叢林、溪谷，和遠方一座廢棄燈塔。</p>
-        <p>殘骸中的補給箱、前人留下的日記、燈塔裡的無線電——<strong>上面全是英文。</strong></p>
+        <p>你搭郵輪前往國際商務會議，途中遇上暴風雨。醒來時你躺在一片陌生的沙灘上，遠方是一座廢棄的企業度假村和一座燈塔。</p>
+        <p>飯店告示、商店收據、辦公室報告、燈塔裡的通訊紀錄——<strong>全是多益常見的英文。</strong></p>
         <div class="brief-list">
           <div><span class="mono">01</span> 每完成一項英語任務，就是一次外出探索，會消耗飽足與水分。</div>
           <div><span class="mono">02</span> 表現越好，帶回的物資越多。</div>
@@ -127,7 +127,7 @@ function select(zone) {
 
           <template v-if="game.isUnlocked(selected.id)">
             <h2 class="briefing-title">{{ selected.zh }}</h2>
-            <div class="briefing-sub">{{ selected.name }}</div>
+            <div class="briefing-sub">{{ selected.name }} · 多益主題：{{ selected.topic }}</div>
             <p class="briefing-text">{{ selected.intro }}</p>
             <dl class="specs">
               <div>

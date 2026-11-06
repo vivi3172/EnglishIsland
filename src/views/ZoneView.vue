@@ -33,7 +33,7 @@ function missionStatus(route) {
         <div class="panel zone-card">
           <div class="eyebrow">SECTOR {{ code(index) }}</div>
           <h1 class="page-title">{{ zone.zh }}</h1>
-          <div class="briefing-sub">{{ zone.name }}</div>
+          <div class="briefing-sub">{{ zone.name }} · 多益主題：{{ zone.topic }}</div>
           <p class="briefing-text">{{ zone.intro }}</p>
           <dl class="specs">
             <div>
