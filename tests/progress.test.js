@@ -195,7 +195,44 @@ describe('build', () => {
   })
 })
 
+describe('daily review', () => {
+  it('records when each answered word was last seen', () => {
+    const out = completeActivity(createInitialProgress(), {
+      kind: 'quiz', zoneId: 'beach', resource: 'food', stars: 0, today: '2026-11-09',
+      results: [r('ticket', true), r('delay', false)],
+    })
+    expect(out.progress.wordLog).toEqual({ ticket: '2026-11-09', delay: '2026-11-09' })
+  })
+
+  it('gives a food + water bonus only on the first daily review of the day', () => {
+    const results = [r('ticket', true), r('delay', true), r('flight', false)]
+    const first = completeActivity(createInitialProgress(), { kind: 'daily', today: '2026-11-09', results })
+    expect(first.rewards).toEqual({ food: 2, water: 2, herb: 1 })
+    expect(first.dailyBonus).toBe(true)
+    expect(first.progress.dailyReviewDate).toBe('2026-11-09')
+
+    const again = completeActivity(first.progress, { kind: 'daily', today: '2026-11-09', results })
+    expect(again.rewards).toEqual({ herb: 1 })
+    expect(again.dailyBonus).toBe(false)
+
+    const nextDay = completeActivity(again.progress, { kind: 'daily', today: '2026-11-10', results })
+    expect(nextDay.dailyBonus).toBe(true)
+  })
+})
+
 describe('sanitizeProgress', () => {
+  it('keeps saves made before daily review existed, adding empty review fields', () => {
+    const p = sanitizeProgress({ version: 2, zones: { beach: { stars: 2 } } })
+    expect(p.zones.beach.stars).toBe(2)
+    expect(p.wordLog).toEqual({})
+    expect(p.dailyReviewDate).toBeNull()
+  })
+  it('drops invalid word log entries', () => {
+    const p = sanitizeProgress({ version: 2, wordLog: { ticket: '2026-11-09', delay: 'x', flight: 3 }, dailyReviewDate: 'bad' })
+    expect(p.wordLog).toEqual({ ticket: '2026-11-09' })
+    expect(p.dailyReviewDate).toBeNull()
+  })
+
   it('starts fresh for corrupted or old-version saves', () => {
     expect(sanitizeProgress('garbage')).toEqual(createInitialProgress())
     expect(sanitizeProgress({ version: 1, shells: 99 })).toEqual(createInitialProgress())

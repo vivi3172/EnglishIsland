@@ -20,6 +20,7 @@ export const WELL_FED_HEAL = 5 // 探索時飽足、水分都 >= 50 回復生命
 export const CAMPFIRE_HEAL = 10
 export const MAX_TICK_DAYS = 30
 export const FAINT_RECOVERY = { hunger: 50, thirst: 50, health: 50 }
+export const DAILY_REVIEW_BONUS = { food: 2, water: 2 } // 每天第一次完成每日複習
 
 // 使用物資的效果
 export const ITEM_EFFECTS = {
@@ -40,6 +41,8 @@ export function createInitialProgress() {
     built: [],
     zones: {}, // { [zoneId]: { stars, sentenceStars, learned } }
     wrongWords: {}, // { [en]: 答錯次數 }
+    wordLog: {}, // { [en]: 'YYYY-MM-DD' 最後一次作答日 }，每日複習用來輪替
+    dailyReviewDate: null, // 最後一次完成每日複習的日期
     faints: 0,
     rescuedDay: null,
     introSeen: false,
@@ -64,6 +67,8 @@ export function sanitizeProgress(raw) {
     built: Array.isArray(raw.built) ? raw.built.filter((x) => typeof x === 'string') : [],
     zones: obj(raw.zones),
     wrongWords: obj(raw.wrongWords),
+    wordLog: Object.fromEntries(Object.entries(obj(raw.wordLog)).filter(([, v]) => date(v))),
+    dailyReviewDate: date(raw.dailyReviewDate),
     faints: num(raw.faints, 0),
     rescuedDay: Number.isFinite(raw.rescuedDay) ? raw.rescuedDay : null,
     introSeen: raw.introSeen === true,
@@ -103,10 +108,12 @@ export function isZoneUnlocked(progress, zones, zoneId) {
   return zoneStars(progress, zones[index - 1].id) >= 1
 }
 
-// results: [{ en, correct }]
-export function recordAnswers(progress, results) {
+// results: [{ en, correct }]；有 today 時一併記錄每個字最後作答日
+export function recordAnswers(progress, results, today = null) {
   const wrongWords = { ...progress.wrongWords }
+  const wordLog = { ...progress.wordLog }
   for (const { en, correct } of results) {
+    if (today) wordLog[en] = today
     if (!correct) {
       wrongWords[en] = (wrongWords[en] ?? 0) + 1
     } else if (wrongWords[en]) {
@@ -114,7 +121,7 @@ export function recordAnswers(progress, results) {
       if (wrongWords[en] <= 0) delete wrongWords[en]
     }
   }
-  return { ...progress, wrongWords }
+  return { ...progress, wrongWords, wordLog }
 }
 
 // ---------- 生存數值 ----------
@@ -196,8 +203,8 @@ export function dailyTick(progress, today) {
 }
 
 // 依活動表現計算獲得的物資
-// kind: 'cards' | 'quiz' | 'spell' | 'sentence' | 'review'
-export function activityRewards({ kind, resource, correct = 0, total = 0, stars = 0, newStars = 0, firstTime = false }) {
+// kind: 'cards' | 'quiz' | 'spell' | 'sentence' | 'review' | 'daily'
+export function activityRewards({ kind, resource, correct = 0, total = 0, stars = 0, newStars = 0, firstTime = false, dailyBonus = false }) {
   const rewards = {}
   const add = (k, n) => {
     if (k && n > 0) rewards[k] = (rewards[k] ?? 0) + n
@@ -205,18 +212,26 @@ export function activityRewards({ kind, resource, correct = 0, total = 0, stars 
   if (kind === 'cards') add(resource, firstTime ? 2 : 1)
   else if (kind === 'quiz') add(resource, stars + 1)
   else if (kind === 'spell' || kind === 'sentence') add(resource, total > 0 && correct / total >= 0.6 ? 2 : 1)
-  else if (kind === 'review') add('herb', Math.ceil(correct / 2))
+  else if (kind === 'review' || kind === 'daily') add('herb', Math.ceil(correct / 2))
+  if (dailyBonus) {
+    add('food', DAILY_REVIEW_BONUS.food)
+    add('water', DAILY_REVIEW_BONUS.water)
+  }
   add('parts', newStars) // 每拿到一顆新星星都會找到一個零件
   return rewards
 }
 
 // 完成一次挑戰（一趟探索）。回傳更新後的進度與這趟的結果。
-// input: { kind, zoneId?, resource?, results?, correct?, total?, stars? }
+// input: { kind, zoneId?, resource?, results?, correct?, total?, stars?, today? }
 export function completeActivity(progress, input) {
-  const { kind, zoneId = null, resource = null, results = [], stars = 0 } = input
+  const { kind, zoneId = null, resource = null, results = [], stars = 0, today = null } = input
   const correct = input.correct ?? results.filter((r) => r.correct).length
   const total = input.total ?? results.length
-  let next = results.length ? recordAnswers(progress, results) : progress
+  let next = results.length ? recordAnswers(progress, results, today) : progress
+
+  // 每日複習：每天第一次完成有額外食物與淡水
+  const dailyBonus = kind === 'daily' && !!today && progress.dailyReviewDate !== today
+  if (kind === 'daily' && today) next = { ...next, dailyReviewDate: today }
 
   // 星星與學習紀錄
   let newStars = 0
@@ -236,7 +251,7 @@ export function completeActivity(progress, input) {
     next = { ...next, zones: { ...next.zones, [zoneId]: zone } }
   }
 
-  const rewards = activityRewards({ kind, resource, correct, total, stars, newStars, firstTime })
+  const rewards = activityRewards({ kind, resource, correct, total, stars, newStars, firstTime, dailyBonus })
 
   // 探索消耗與生命變化（已獲救就不再消耗）
   const stats = { ...next.stats }
@@ -255,6 +270,7 @@ export function completeActivity(progress, input) {
     rewards,
     fainted: out.fainted,
     newBest: newStars > 0,
+    dailyBonus,
     cost: next.rescuedDay ? {} : { ...EXPEDITION_COST },
   }
 }

@@ -41,7 +41,7 @@ watch(
 )
 
 function run(input) {
-  const out = completeActivity(state.progress, input)
+  const out = completeActivity(state.progress, { ...input, today: localDateString() })
   state.progress = out.progress
   return out
 }
@@ -91,6 +91,13 @@ export const game = {
   },
   finishReview(results) {
     return run({ kind: 'review', results })
+  },
+  finishDaily(results) {
+    return run({ kind: 'daily', results })
+  },
+  // 今天是否已完成每日複習
+  get dailyDone() {
+    return state.progress.dailyReviewDate === localDateString()
   },
   use(kind) {
     const out = useItem(state.progress, kind)
