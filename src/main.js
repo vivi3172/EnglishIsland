@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import App from './App.vue'
 import './style.css'
+import './phonics.css'
 
 import IslandMap from './views/IslandMap.vue'
 import ZoneView from './views/ZoneView.vue'
@@ -10,6 +11,13 @@ import QuizView from './views/QuizView.vue'
 import SpellingView from './views/SpellingView.vue'
 import BuildView from './views/BuildView.vue'
 import SentenceView from './views/SentenceView.vue'
+import PhonicsHome from './views/phonics/PhonicsHome.vue'
+import PhonicsLesson from './views/phonics/PhonicsLesson.vue'
+import PhonicsPairs from './views/phonics/PhonicsPairs.vue'
+import PhonicsPractice from './views/phonics/PhonicsPractice.vue'
+import PhonicsSort from './views/phonics/PhonicsSort.vue'
+import PhonicsProgress from './views/phonics/PhonicsProgress.vue'
+import { DEFAULT_COURSE_ID } from './data/phonics/index.js'
 
 const router = createRouter({
   // hash 模式：純靜態部署不需要伺服器 rewrite 設定
@@ -24,6 +32,14 @@ const router = createRouter({
     { path: '/review', name: 'review', component: QuizView, props: { mode: 'review' } },
     { path: '/daily', name: 'daily', component: QuizView, props: { mode: 'daily' } },
     { path: '/build', name: 'build', component: BuildView },
+    // 自然發音：:course 對應 data/phonics/index.js 的課程 id，之後新增課程不用改路由
+    { path: '/phonics', redirect: `/phonics/${DEFAULT_COURSE_ID}` },
+    { path: '/phonics/:course', name: 'phonics', component: PhonicsHome, props: true },
+    { path: '/phonics/:course/group/:group', name: 'phonics-lesson', component: PhonicsLesson, props: true },
+    { path: '/phonics/:course/pairs', name: 'phonics-pairs', component: PhonicsPairs, props: true },
+    { path: '/phonics/:course/practice/:mode', name: 'phonics-practice', component: PhonicsPractice, props: true },
+    { path: '/phonics/:course/sort', name: 'phonics-sort', component: PhonicsSort, props: true },
+    { path: '/phonics/:course/progress', name: 'phonics-progress', component: PhonicsProgress, props: true },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
   scrollBehavior: () => ({ top: 0 }),

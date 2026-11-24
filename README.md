@@ -41,6 +41,28 @@ npm run build    # 產出 dist/，可直接放到任何靜態主機（GitHub Pag
 
 **🔁 每日複習（疊加複習）**：從所有學過區域的單字出 12 題，學越多區題庫越大。答錯過的字優先，其次是最久沒複習的字，所以每天會自動輪到不同的舊單字。每天第一次完成額外取得 🍖+2、💧+2。
 
+## 🖐️ 自然發音 Phonics：五大長母音
+
+導覽列「自然發音」。以五根手指代表 A E I O U，學「同一個音有好幾種拼法」，遇到陌生單字也能自己拼讀。
+
+| 母音 | IPA | 拼字組合 |
+|---|---|---|
+| A | /eɪ/ | ai、ay、a_e |
+| E | /iː/ | ee、ea、ey、e_e |
+| I | /aɪ/ | i_e、ie、igh |
+| O | /oʊ/ | o_e、oe、oa、ow |
+| U | /juː/ | u_e、ue、ew |
+| U | /uː/ | u_e、ue、ew、oo、ui |
+
+- **STEP 1–3**（每個母音的課程頁）：先聽聲音再顯示拼法 → 拼字規則與位置、例外說明 → 單字音素拆解拼讀動畫（正常／慢速、例句、口型舌位、麥克風跟讀）。
+- **STEP 4**：長短母音比較（cap / cape…），可聽音辨識。
+- **STEP 5**：聽音選字、聽音選母音、選字母組合、填空、陌生單字拼讀、長短音辨識、拖曳分類。答錯一定說明規則與錯誤原因。
+- **AI 導師**：規則式、純前端（不需網路或 API 金鑰），依答題紀錄找出易混淆的母音、不熟的拼法，推薦延伸單字與下一步，並自動調整難度（入門／進階／挑戰）。
+- **進度**：每個拼字組合熟練度 0–5（答對 +1、答錯 -2）、正確率、錯題、每日複習、弱項加強、綜合測驗。存在 `english-island-phonics`，與遊戲存檔分開，不影響求生數值。
+- 語音使用瀏覽器內建 Web Speech：子音以近似音示範（如 buh），不同瀏覽器的聲音會有差異；跟讀需要支援語音辨識的瀏覽器（Chrome / Edge / Safari）。
+
+**新增課程**（Short Vowels、Silent E、Vowel Teams、R-controlled、Diphthongs、Blends、Digraphs）：在 `src/data/phonics/` 依 `longVowels.js` 的格式新增資料，到 `index.js` 把該課程改成 `status: 'ready'` 並填入 `data`。路由 `#/phonics/<course-id>` 與練習、進度邏輯會自動支援；`tests/phonics.test.js` 的內容檢查可照樣套用。
+
 ## 結構
 
 ```
@@ -51,6 +73,11 @@ src/logic/progress.js    求生規則：探索、每日流逝、昏倒、建造�
 src/logic/quiz.js        出題、計分、拼字（純函式，有測試）
 src/logic/sentence.js    句型填空、排序（純函式，有測試）
 src/logic/review.js      每日複習的題庫與挑字順序（純函式，有測試）
+src/data/phonics/        自然發音課程註冊表、長母音教材、音素表
+src/logic/phonics.js     拼字上色、音素拆解、出題、答題解說（純函式，有測試）
+src/logic/phonicsProgress.js  熟練度、自適應出題、AI 導師分析（純函式，有測試）
+src/store/phonics.js     自然發音進度 + localStorage（獨立存檔）
+src/views/phonics/       五指地圖、課程、長短母音、練習、拖曳分類、進度
 src/store/game.js        響應式狀態 + localStorage
 src/components/          求生面板、探索結果
 src/views/               地圖、區域、單字卡、測驗/複習、拼字、句型、建造

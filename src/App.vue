@@ -17,6 +17,7 @@ const NAV = [
   { to: '/daily', icon: 'retry', label: '每日複習', daily: true },
   { to: '/review', icon: 'notes', label: '錯題複習', badge: true },
   { to: '/build', icon: 'hammer', label: '建造' },
+  { to: '/phonics', icon: 'hand', label: '自然發音', prefix: '/phonics' },
 ]
 
 onMounted(() => game.tick())
@@ -38,6 +39,7 @@ onMounted(() => game.tick())
           class="side-link"
           :exact-active-class="item.exact ? 'active' : ''"
           :active-class="item.exact ? '' : 'active'"
+          :class="{ active: item.prefix && $route.path.startsWith(item.prefix) }"
         >
           <Icon :name="item.icon" />
           <span>{{ item.label }}</span>
@@ -72,6 +74,7 @@ onMounted(() => game.tick())
         class="bottom-link"
         :exact-active-class="item.exact ? 'active' : ''"
         :active-class="item.exact ? '' : 'active'"
+        :class="{ active: item.prefix && $route.path.startsWith(item.prefix) }"
       >
         <Icon :name="item.icon" :size="20" />
         <span>{{ item.label }}</span>
