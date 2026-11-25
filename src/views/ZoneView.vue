@@ -26,7 +26,7 @@ function missionStatus(route) {
 
 <template>
   <section v-if="zone && unlocked" class="page">
-    <router-link to="/" class="back"><Icon name="left" :size="16" /> 地圖</router-link>
+    <router-link to="/" class="back"><Icon name="left" :size="16" /> 星球</router-link>
 
     <div class="zone-layout" :style="{ '--zone': zone.color }">
       <div class="zone-side">
@@ -96,6 +96,6 @@ function missionStatus(route) {
   <section v-else class="page empty-state">
     <Icon name="lock" :size="32" />
     <p>{{ zone ? '這個區域尚未解鎖。' : '找不到這個區域。' }}</p>
-    <router-link to="/" class="btn">回到地圖</router-link>
+    <router-link to="/" class="btn">回到星球</router-link>
   </section>
 </template>

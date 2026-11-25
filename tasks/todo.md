@@ -1,3 +1,35 @@
+# 2026-11-25 首頁改成「英語群島星球」
+
+## 目標 / 驗收條件
+- [x] 參考 jh-battle.web.app 的星球首頁：可拖曳旋轉的星球、上一座／下一座、點島名進入、右側島嶼清單與進度
+- [x] 只做英文：島嶼 = 6 個多益區域 + 每日漂流瓶 + 五大長母音 + 音節切分 + 錯題怪獸窩 + 求救無線電塔
+- [x] 鎖住的區域維持「未知島嶼」，不能進入
+- [x] 既有頁面、存檔、求生規則不變（只換首頁 `/`）
+- [x] 鍵盤可操作（左右鍵旋轉、Enter 登島）；prefers-reduced-motion 時不做旋轉動畫
+
+## 驗證
+- [x] `npm test`（新增 tests/planet.test.js：投影、最短旋轉、正前方島、島嶼清單完整）
+- [x] `npm run build`
+- [x] 瀏覽器：拖曳、下一座、拖曳後點島名進入、鍵盤、手機 390px 無橫向捲動、console 無 error/warn
+
+## Working Notes
+- 「只做全英文」解讀為：星球上只放英文的學習內容（原站還有國文、數學等其他科），介面文字維持中文。
+- 星球是 CSS 球體 + 經緯度投影，沒有新增套件；表面花紋用 background-position 跟著角度捲動，看起來在自轉。
+- 星球上的島名按鈕 tabindex=-1，鍵盤／報讀器走右側清單（避免背面看不到的島也能被 Tab 到）。
+
+## Risk & Rollback
+- 風險：低。只換首頁元件與 CSS，路由與存檔不動。
+- Rollback：revert 這個 commit。
+
+## Results
+- 新增：`src/logic/planet.js`、`src/data/planet.js`、`src/planet.css`、`tests/planet.test.js`。
+- 修改：`src/views/IslandMap.vue`（改寫成星球）、`style.css`（刪掉平面地圖／簡報抽屜的 CSS）、`main.js`（載入 planet.css）、導覽列「地圖」→「星球」、各頁「回到地圖」→「回到星球」、README。
+- 驗證：`npm test` 8 檔 / 125 測試全過；`npm run build` 成功；agent-browser 1400×820 與 390×844 截圖確認；拖曳 140px 轉到下一座並吸附；拖曳後點正面島名 → `#/daily`；左右鍵切換；鎖住的島按 Enter 不會進入；console 無 error/warn。
+- 發現並修正：拖曳結束後瀏覽器不一定送 click，「吞掉拖曳後 click」的旗標殘留，吃掉下一次真正的點擊（見 lessons.md）。
+- 未驗證：真機觸控拖曳的手感（touch-action: pan-y，垂直仍可捲動頁面）。
+
+---
+
 # 2026-11-25 音節切分（一元一輔切）+ 每日 5 個新單字
 
 ## 目標 / 驗收條件

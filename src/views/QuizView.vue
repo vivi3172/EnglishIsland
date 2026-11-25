@@ -113,7 +113,7 @@ function optionClass(option) {
   <section v-if="allowed" class="page">
     <MissionHeader
       :back-to="zone ? { name: 'zone', params: { id: zone.id } } : isDaily ? '/daily' : '/'"
-      :back-label="zone ? zone.zh : isDaily ? '今日漂流瓶' : '地圖'"
+      :back-label="zone ? zone.zh : isDaily ? '今日漂流瓶' : '星球'"
       :title="title"
       :code="code"
       :current="summary ? questions.length : index"
@@ -130,14 +130,14 @@ function optionClass(option) {
       <template v-if="isDaily">
         <Icon name="book" :size="32" />
         <p>還沒有可以複習的單字。</p>
-        <p class="muted">到地圖上的區域翻完單字卡，或打開今天的漂流瓶，學過的單字每天都會疊加進每日複習。</p>
+        <p class="muted">到星球上的島嶼翻完單字卡，或打開今天的漂流瓶，學過的單字每天都會疊加進每日複習。</p>
       </template>
       <template v-else>
         <Icon name="check" :size="32" />
         <p>目前沒有需要複習的單字。</p>
         <p class="muted">測驗或拼字答錯的單字會自動收進這裡。答對可取得草藥。</p>
       </template>
-      <router-link to="/" class="btn">回到地圖</router-link>
+      <router-link to="/" class="btn">回到星球</router-link>
     </div>
 
     <div v-else-if="!summary" class="stage">
@@ -203,7 +203,7 @@ function optionClass(option) {
         <ExpeditionResult :out="summary.out" />
         <div class="btn-row">
           <button class="btn" @click="start"><Icon name="retry" :size="16" /> 再次挑戰</button>
-          <router-link to="/" class="btn primary">回到地圖 <Icon name="right" :size="16" /></router-link>
+          <router-link to="/" class="btn primary">回到星球 <Icon name="right" :size="16" /></router-link>
         </div>
       </div>
     </div>
@@ -212,6 +212,6 @@ function optionClass(option) {
   <section v-else class="page empty-state">
     <Icon name="lock" :size="32" />
     <p>這個區域尚未解鎖。</p>
-    <router-link to="/" class="btn">回到地圖</router-link>
+    <router-link to="/" class="btn">回到星球</router-link>
   </section>
 </template>

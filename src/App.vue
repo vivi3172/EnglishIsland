@@ -12,7 +12,7 @@ const dailyPending = computed(() => !game.dailyDone)
 const low = (v) => v <= 25
 
 const NAV = [
-  { to: '/', icon: 'map', label: '地圖', exact: true },
+  { to: '/', icon: 'map', label: '星球', exact: true },
   { to: '/daily', icon: 'retry', label: '每日單字', daily: true },
   { to: '/review', icon: 'notes', label: '錯題複習', badge: true },
   { to: '/build', icon: 'hammer', label: '建造' },

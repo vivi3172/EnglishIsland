@@ -28,3 +28,11 @@
 - **類型**：environment-dependent
 - **現象**：`python - <<'EOF' ... EOF` 或 `cat > file <<'EOF'` 內容含引號時，Git Bash 工具回報 `unexpected EOF while looking for matching`，整段指令沒執行。
 - **預防規則**：多行程式或檔案內容改用 Write 工具寫到 scratchpad 再執行，不用 heredoc。
+
+## 2026-11-25 拖曳後的「吞 click」旗標吃掉下一次點擊
+
+- **類型**：incorrect assumption（假設錯誤）
+- **現象**：星球拖曳後，點正面的島名沒有反應，要點第二次才進得去。
+- **根因**：pointerup 時設 `suppressClick = true`，預期拖曳結束一定會跟著一個 click 把旗標清掉；但滑鼠移動過後 down／up 不在同一元素時瀏覽器不送 click，旗標殘留。
+- **預防規則**：這類「只影響下一個事件」的旗標一定要有自動到期（`setTimeout(() => flag = false, 0)`）或在下一次 pointerdown 重設；瀏覽器驗證要測「拖曳 → 再點一下」這個順序。
+- **Tripwire**：`grep -n "suppressClick = true" -A2 src/views/*.vue` 每一處都要看到同時排程清除。

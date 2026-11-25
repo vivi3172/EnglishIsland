@@ -129,6 +129,6 @@ function restart() {
   <section v-else class="page empty-state">
     <Icon name="lock" :size="32" />
     <p>這個區域尚未解鎖。</p>
-    <router-link to="/" class="btn">回到地圖</router-link>
+    <router-link to="/" class="btn">回到星球</router-link>
   </section>
 </template>

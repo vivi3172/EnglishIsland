@@ -4,7 +4,9 @@
 
 純前端，不需後端與帳號，進度存在瀏覽器 localStorage。
 
-介面為深色「戰術終端」風格：滿版版面（桌機左側固定生存狀態側欄、右側全寬內容）、線條 SVG 圖示（`src/components/Icon.vue`）、等寬數字、琥珀色訊號主色；地圖點選區域會在右側（手機為底部抽屜）開啟任務簡報。
+介面為深色「戰術終端」風格：滿版版面（桌機左側固定生存狀態側欄、右側全寬內容）、線條 SVG 圖示（`src/components/Icon.vue`）、等寬數字、琥珀色訊號主色。
+
+**🪐 首頁：英語群島星球**——一顆可以拖曳旋轉的星球，表面散布 11 座全英文的島：6 個多益區域、每日漂流瓶、五大長母音、音節切分、錯題怪獸窩、求救無線電塔。拖曳或按「上一座／下一座」（鍵盤左右鍵）轉到想去的島，點島名（或 Enter）登島；右側（手機在下方）列出每座島的星星／熟練度與「出發」。島的順序與位置在 `src/data/planet.js`，投影與旋轉角度計算在 `src/logic/planet.js`。
 
 ## 啟動
 
@@ -83,6 +85,8 @@ npm run build    # 產出 dist/，可直接放到任何靜態主機（GitHub Pag
 
 ```
 src/data/zones.js        區域與單字
+src/data/planet.js       星球上的島嶼清單（順序、顏色、連結）
+src/logic/planet.js      星球投影、旋轉到指定島、找正前方的島（純函式，有測試）
 src/data/sentences.js    各區句型與例句
 src/data/survival.js     物資、數值、設施的顯示資料
 src/logic/progress.js    求生規則：探索、每日流逝、昏倒、建造、解鎖（純函式，有測試）
@@ -98,7 +102,7 @@ src/store/phonics.js     自然發音進度 + localStorage（獨立存檔）
 src/views/phonics/       五指地圖、課程、長短母音、練習、拖曳分類、進度
 src/store/game.js        響應式狀態 + localStorage
 src/components/          求生面板、探索結果
-src/views/               地圖、區域、單字卡、測驗/複習、拼字、句型、建造
+src/views/               星球首頁（IslandMap.vue）、區域、單字卡、測驗/複習、拼字、句型、建造
 ```
 
 數值平衡都集中在 `src/logic/progress.js` 最上方的常數，調整難度只要改那裡。

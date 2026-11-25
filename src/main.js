@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import App from './App.vue'
 import './style.css'
 import './phonics.css'
+import './planet.css'
 
 import IslandMap from './views/IslandMap.vue'
 import ZoneView from './views/ZoneView.vue'

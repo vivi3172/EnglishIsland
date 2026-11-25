@@ -167,7 +167,7 @@ if (word.value) speak(word.value.en)
         <ExpeditionResult :out="summary.out" />
         <div class="btn-row">
           <button class="btn" @click="start"><Icon name="retry" :size="16" /> 再玩一次</button>
-          <router-link to="/" class="btn primary">回到地圖 <Icon name="right" :size="16" /></router-link>
+          <router-link to="/" class="btn primary">回到星球 <Icon name="right" :size="16" /></router-link>
         </div>
       </div>
     </div>
@@ -176,6 +176,6 @@ if (word.value) speak(word.value.en)
   <section v-else class="page empty-state">
     <Icon name="lock" :size="32" />
     <p>這個區域尚未解鎖。</p>
-    <router-link to="/" class="btn">回到地圖</router-link>
+    <router-link to="/" class="btn">回到星球</router-link>
   </section>
 </template>
