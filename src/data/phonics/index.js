@@ -1,9 +1,11 @@
 // 自然發音課程註冊表。新增課程：在 data/phonics/ 新增資料檔（格式見 longVowels.js），
 // 把 status 改成 'ready' 並填入 data，地圖、課程、練習、進度就會自動支援。
+// 有 to 的課程使用自己的頁面（例如音節切分），不走母音課程的共用 UI。
 import { LONG_VOWELS } from './longVowels.js'
 
 export const PHONICS_COURSES = [
   { id: 'long-vowels', title: '五大長母音', en: 'Long Vowels', status: 'ready', data: LONG_VOWELS },
+  { id: 'syllables', title: '音節切分', en: 'Syllable Division', status: 'ready', to: '/phonics/syllables' },
   { id: 'short-vowels', title: '短母音', en: 'Short Vowels', status: 'planned' },
   { id: 'silent-e', title: '不發音的 e', en: 'Silent E', status: 'planned' },
   { id: 'vowel-teams', title: '母音組合', en: 'Vowel Teams', status: 'planned' },
@@ -16,6 +18,6 @@ export const PHONICS_COURSES = [
 export const DEFAULT_COURSE_ID = 'long-vowels'
 
 export function findCourse(id) {
-  const entry = PHONICS_COURSES.find((c) => c.id === id && c.status === 'ready')
+  const entry = PHONICS_COURSES.find((c) => c.id === id && c.status === 'ready' && c.data)
   return entry?.data ?? null
 }

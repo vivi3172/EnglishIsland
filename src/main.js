@@ -10,6 +10,7 @@ import FlashcardView from './views/FlashcardView.vue'
 import QuizView from './views/QuizView.vue'
 import SpellingView from './views/SpellingView.vue'
 import BuildView from './views/BuildView.vue'
+import DailyView from './views/DailyView.vue'
 import SentenceView from './views/SentenceView.vue'
 import PhonicsHome from './views/phonics/PhonicsHome.vue'
 import PhonicsLesson from './views/phonics/PhonicsLesson.vue'
@@ -17,6 +18,8 @@ import PhonicsPairs from './views/phonics/PhonicsPairs.vue'
 import PhonicsPractice from './views/phonics/PhonicsPractice.vue'
 import PhonicsSort from './views/phonics/PhonicsSort.vue'
 import PhonicsProgress from './views/phonics/PhonicsProgress.vue'
+import SyllablesLesson from './views/phonics/SyllablesLesson.vue'
+import SyllableChop from './views/phonics/SyllableChop.vue'
 import { DEFAULT_COURSE_ID } from './data/phonics/index.js'
 
 const router = createRouter({
@@ -30,10 +33,19 @@ const router = createRouter({
     { path: '/zone/:id/spell', name: 'spell', component: SpellingView, props: true },
     { path: '/zone/:id/sentence', name: 'sentence', component: SentenceView, props: true },
     { path: '/review', name: 'review', component: QuizView, props: { mode: 'review' } },
-    { path: '/daily', name: 'daily', component: QuizView, props: { mode: 'daily' } },
+    { path: '/daily', name: 'daily', component: DailyView },
+    { path: '/daily/quiz', name: 'daily-quiz', component: QuizView, props: { mode: 'daily' } },
     { path: '/build', name: 'build', component: BuildView },
     // 自然發音：:course 對應 data/phonics/index.js 的課程 id，之後新增課程不用改路由
     { path: '/phonics', redirect: `/phonics/${DEFAULT_COURSE_ID}` },
+    // 音節切分（一元一輔切）：資料形狀和母音課程不同，用自己的頁面；靜態路徑優先於 :course
+    { path: '/phonics/syllables', name: 'syllables', component: SyllablesLesson },
+    {
+      path: '/phonics/syllables/chop',
+      name: 'syllable-chop',
+      component: SyllableChop,
+      props: (route) => ({ focus: typeof route.query.focus === 'string' ? route.query.focus : null }),
+    },
     { path: '/phonics/:course', name: 'phonics', component: PhonicsHome, props: true },
     { path: '/phonics/:course/group/:group', name: 'phonics-lesson', component: PhonicsLesson, props: true },
     { path: '/phonics/:course/pairs', name: 'phonics-pairs', component: PhonicsPairs, props: true },

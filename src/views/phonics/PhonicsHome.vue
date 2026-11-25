@@ -34,6 +34,7 @@ const MODES = computed(() => [
   { icon: 'retry', title: '每日複習', desc: report.value.dailyDone ? '今天已完成 ✓' : '錯題優先，輪替舊單字', to: { name: 'phonics-practice', params: params({ mode: 'daily' }) } },
   { icon: 'target', title: '弱項加強', desc: report.value.wrongCount ? `${report.value.wrongCount} 個錯題待重練` : '針對不熟的拼字組合', to: { name: 'phonics-practice', params: params({ mode: 'weak' }) } },
   { icon: 'star', title: '綜合測驗', desc: '六個長母音 × 所有題型', to: { name: 'phonics-practice', params: params({ mode: 'test' }) } },
+  { icon: 'type', title: '音節切分（一元一輔切）', desc: '長單字切成小塊來唸 · 劈椰子遊戲', to: { name: 'syllables' } },
   { icon: 'layers', title: '拖曳分類', desc: '把單字放進對的手指', to: { name: 'phonics-sort', params: params() } },
   { icon: 'chart', title: '學習進度', desc: '熟練度、正確率、錯題', to: { name: 'phonics-progress', params: params() } },
 ])
@@ -146,7 +147,8 @@ const MODES = computed(() => [
     <div class="section-head"><div class="eyebrow">COURSES · 自然發音課程</div></div>
     <ul class="course-roadmap">
       <li v-for="c in PHONICS_COURSES" :key="c.id" :class="{ ready: c.status === 'ready' }">
-        <strong>{{ c.title }}</strong>
+        <router-link v-if="c.to" :to="c.to" class="course-link"><strong>{{ c.title }}</strong></router-link>
+        <strong v-else>{{ c.title }}</strong>
         <span class="muted small">{{ c.en }}</span>
         <span class="tag" :class="{ accent: c.status === 'ready' }">{{ c.status === 'ready' ? '學習中' : '即將推出' }}</span>
       </li>

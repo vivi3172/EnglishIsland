@@ -39,7 +39,7 @@ npm run build    # 產出 dist/，可直接放到任何靜態主機（GitHub Pag
 
 每個區域 4 個挑戰：📖 單字卡、🎯 小測驗（拿 1 星解鎖下一區）、🔤 拼字、💬 句型練習。每拿到一顆新星星額外找到 1 個 ⚙️ 零件。📝 錯題複習答對可獲得 🌿 草藥。
 
-**🔁 每日複習（疊加複習）**：從所有學過區域的單字出 12 題，學越多區題庫越大。答錯過的字優先，其次是最久沒複習的字，所以每天會自動輪到不同的舊單字。每天第一次完成額外取得 🍖+2、💧+2。
+**🍾 每日單字（每天 5 個新字 + 疊加複習）**：導覽列「每日單字」。每天第一次進來，海浪會沖上 5 個漂流瓶，裝著題庫（`src/data/dailyWords.js`，100 個多益入門字，與區域單字不重複）依序的下一批新字；沒來的日子不會累積欠帳。打開全部瓶子後進入每日測驗：**今天的 5 個新字全部出 + 10 個舊字**（所有學過的區域單字 + 之前每天發過的字；答錯過的字優先，其次是最久沒複習的字）。題庫用完後改為只複習舊字 12 題。每天第一次完成額外取得 🍖+2、💧+2。要加新字直接加在 `dailyWords.js` 最後即可。
 
 ## 🖐️ 自然發音 Phonics：五大長母音
 
@@ -61,6 +61,22 @@ npm run build    # 產出 dist/，可直接放到任何靜態主機（GitHub Pag
 - **進度**：每個拼字組合熟練度 0–5（答對 +1、答錯 -2）、正確率、錯題、每日複習、弱項加強、綜合測驗。存在 `english-island-phonics`，與遊戲存檔分開，不影響求生數值。
 - 語音使用瀏覽器內建 Web Speech：子音以近似音示範（如 buh），不同瀏覽器的聲音會有差異；跟讀需要支援語音辨識的瀏覽器（Chrome / Edge / Safari）。
 
+### ✂️ 音節切分：一元一輔切
+
+自然發音首頁的「音節切分（一元一輔切）」，或直接開 `#/phonics/syllables`。把長單字切成小塊來唸：① 標出元音 V（a e i o u）② 數前兩個元音中間夾幾個輔音 C ③ 下刀 ④ 一段一段唸 ⑤ 合起來。
+
+| 規則 | 型態 | 例字 | 前一段母音 |
+|---|---|---|---|
+| 複合字 | 小字 \| 小字 | sun·set、air·port | — |
+| 兩輔切中間 | VC \| CV | nap·kin、can·cel | 短音（閉音節） |
+| 一元一輔切前面 | V \| CV | pa·per、ho·tel | 長音（開音節） |
+| 唸不通就切後面 | VC \| V | cam·el、trav·el | 短音 |
+| 輔音 + le | C + le | ta·ble、lit·tle | 依前一段開／閉 |
+
+- **示範台**：點例字 → 切開動畫、逐段發音再合起來；另有「好朋友不分開」（ck、sh、th…不切）說明，以及「輸入任何單字看第一刀切哪裡」。
+- **🥥 劈椰子切字**：點字母之間的縫把單字劈開，再判斷前一段唸長音或短音；答錯會說明原因（例如先試 V|CV 唸不通要退一步切 VC|V）。每條規則的熟練度存在 phonics 存檔的 `syllables` 課程，可「只練這條」。
+- 教材在 `src/data/phonics/syllables.js`（用 `pa|per` 標切點），`tests/syllables.test.js` 會自動檢查每個字真的符合它的規則。
+
 **新增課程**（Short Vowels、Silent E、Vowel Teams、R-controlled、Diphthongs、Blends、Digraphs）：在 `src/data/phonics/` 依 `longVowels.js` 的格式新增資料，到 `index.js` 把該課程改成 `status: 'ready'` 並填入 `data`。路由 `#/phonics/<course-id>` 與練習、進度邏輯會自動支援；`tests/phonics.test.js` 的內容檢查可照樣套用。
 
 ## 結構
@@ -72,7 +88,9 @@ src/data/survival.js     物資、數值、設施的顯示資料
 src/logic/progress.js    求生規則：探索、每日流逝、昏倒、建造、解鎖（純函式，有測試）
 src/logic/quiz.js        出題、計分、拼字（純函式，有測試）
 src/logic/sentence.js    句型填空、排序（純函式，有測試）
-src/logic/review.js      每日複習的題庫與挑字順序（純函式，有測試）
+src/data/dailyWords.js   每日新單字題庫（每天依序發 5 個）
+src/logic/review.js      每日發新字、每日測驗的題庫與挑字順序（純函式，有測試）
+src/logic/syllables.js   音節切分：標 V/C、建議切法、出題、答錯解說（純函式，有測試）
 src/data/phonics/        自然發音課程註冊表、長母音教材、音素表
 src/logic/phonics.js     拼字上色、音素拆解、出題、答題解說（純函式，有測試）
 src/logic/phonicsProgress.js  熟練度、自適應出題、AI 導師分析（純函式，有測試）

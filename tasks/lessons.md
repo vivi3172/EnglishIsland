@@ -14,3 +14,17 @@
   - 瀏覽器驗證要**走過所有路由**，並在最後執行 `agent-browser console | grep -iE "error|warn"`，結果必須為空。
   - 重啟前先確認 port 已釋放：`netstat -ano | grep ":5179 " | grep LISTEN`，殘留的 `node ... vite.js` 程序要一併停止。
 - **Tripwire**：`curl -s http://localhost:5179/src/views/<View>.vue | grep "__returned__"`，確認模板用到的 import 都有出現在 setup 回傳物件中。
+
+## 2026-11-25 讀舊存檔的 sanitize 對缺欄位會 crash
+
+- **類型**：incorrect assumption（假設錯誤）
+- **現象**：新增 `dailyNew` 欄位後，舊存檔（沒有這個欄位）載入時 `sanitizeProgress` 丟出 `Cannot read properties of undefined (reading 'date')`，玩家會整份進度讀取失敗。
+- **根因**：`obj(raw.dailyNew)` 對 undefined 回傳 `{}`（truthy），但後面又直接讀 `raw.dailyNew.date`，而不是讀 `obj()` 的回傳值。
+- **預防規則**：sanitize 新欄位一律先 `const d = obj(raw.x)` 再只讀 `d`；每個新欄位都要有「舊存檔沒有這個欄位」的測試。
+- **Tripwire**：`grep -n "obj(raw\.\w*) &&" src/logic/progress.js` 應為空。
+
+## 2026-11-25 Bash 工具裡的 heredoc 會解析失敗
+
+- **類型**：environment-dependent
+- **現象**：`python - <<'EOF' ... EOF` 或 `cat > file <<'EOF'` 內容含引號時，Git Bash 工具回報 `unexpected EOF while looking for matching`，整段指令沒執行。
+- **預防規則**：多行程式或檔案內容改用 Write 工具寫到 scratchpad 再執行，不用 heredoc。
