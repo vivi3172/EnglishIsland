@@ -4,6 +4,7 @@ import App from './App.vue'
 import './style.css'
 import './phonics.css'
 import './planet.css'
+import './talk.css'
 
 import IslandMap from './views/IslandMap.vue'
 import ZoneView from './views/ZoneView.vue'
@@ -21,6 +22,8 @@ import PhonicsSort from './views/phonics/PhonicsSort.vue'
 import PhonicsProgress from './views/phonics/PhonicsProgress.vue'
 import SyllablesLesson from './views/phonics/SyllablesLesson.vue'
 import SyllableChop from './views/phonics/SyllableChop.vue'
+import TalkHome from './views/talk/TalkHome.vue'
+import TalkScene from './views/talk/TalkScene.vue'
 import { DEFAULT_COURSE_ID } from './data/phonics/index.js'
 
 const router = createRouter({
@@ -37,6 +40,9 @@ const router = createRouter({
     { path: '/daily', name: 'daily', component: DailyView },
     { path: '/daily/quiz', name: 'daily-quiz', component: QuizView, props: { mode: 'daily' } },
     { path: '/build', name: 'build', component: BuildView },
+    // 情境對話（對話咖啡廳）
+    { path: '/talk', name: 'talk', component: TalkHome },
+    { path: '/talk/:id', name: 'talk-scene', component: TalkScene, props: true },
     // 自然發音：:course 對應 data/phonics/index.js 的課程 id，之後新增課程不用改路由
     { path: '/phonics', redirect: `/phonics/${DEFAULT_COURSE_ID}` },
     // 音節切分（一元一輔切）：資料形狀和母音課程不同，用自己的頁面；靜態路徑優先於 :course

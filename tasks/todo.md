@@ -1,3 +1,30 @@
+# 2026-11-25 加多益入門單字 + 情境對話練習
+
+## 目標 / 驗收條件
+- [x] 每日新單字題庫 95 → 200（多 105 字、21 組主題），不與區域單字或既有每日字重複；已發過的字不受影響（只加在陣列最後）
+- [x] 新功能「對話咖啡廳」：8 個多益情境（機場、飯店、餐廳、退貨、約會議、面試、電話留言、問路）
+  - [x] 對方先說，輪到你時從 3 句中選最合適的回應；答錯顯示為什麼不對（多益 Part 2 常見陷阱），可再選
+  - [x] 每句可點播發音；完成後可「聽完整對話」
+  - [x] 第一次就選對的比例 → 1–3 星，存最佳星數（獨立 localStorage key，不動遊戲存檔）
+- [x] 星球加一座「對話咖啡廳」島，清單顯示星星進度；導覽列加「情境對話」
+
+## 驗證
+- [x] `npm test`：單字不重複、對話資料檢查（每輪恰好 1 個正解、錯誤選項都有說明、選項不重複）、星數計算、存檔 sanitize
+- [x] `npm run build`
+- [x] 瀏覽器：完成一個情境（含答錯一次）、星數寫入並顯示在星球清單；手機 390px 無橫向捲動；console 無 error/warn
+
+## Risk & Rollback
+- 風險：低。新增資料與新頁面；新存檔 key `english-island-dialogues` 與既有存檔分開。
+- Rollback：revert commit。
+
+## Results
+- 單字：`src/data/dailyWords.js` 95 → 200 字（新增 21 組主題：會議、電腦、文件、時間、餐廳、付款、銀行、開車、方向、城市地點、健康、職稱、溝通、電話、網路、飯店房間、形容詞等）。
+- 情境對話：新增 `src/data/dialogues.js`（8 情境 × 4 輪）、`src/logic/dialogue.js`、`src/store/talk.js`、`src/views/talk/TalkHome.vue`、`TalkScene.vue`、`src/talk.css`、`tests/dialogue.test.js`；路由 `/talk`、`/talk/:id`；導覽列「情境對話」；星球新增「對話咖啡廳」島（12 座島）。
+- 驗證：`npm test` 9 檔 / 132 測試全過（含 200 字不重複、對話資料檢查、星數、存檔 sanitize）；`npm run build` 成功；agent-browser：飯店入住先選錯一次 → 顯示說明 → 完成後 3/4 一次選對 = 2 星，寫入 `english-island-dialogues`，星球清單顯示 ★ 2 / 24；手機 390px 無橫向捲動、底部導覽 6 項放得下；console 無 error/warn。
+- 未驗證：TTS 實際聲音、「聽完整對話」連續播放的節奏（headless 聽不到）。
+
+---
+
 # 2026-11-25 首頁改成「英語群島星球」
 
 ## 目標 / 驗收條件

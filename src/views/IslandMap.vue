@@ -13,6 +13,8 @@ import { overallStats, patternMastery } from '../logic/phonicsProgress.js'
 import { project, rotationFor, frontIndex, stepIndex } from '../logic/planet.js'
 import { game } from '../store/game.js'
 import { phonics } from '../store/phonics.js'
+import { talk } from '../store/talk.js'
+import { DIALOGUES } from '../data/dialogues.js'
 import Icon from '../components/Icon.vue'
 import SurvivalPanel from '../components/SurvivalPanel.vue'
 
@@ -47,6 +49,11 @@ function statusOf(isl) {
       const cp = phonics.course(SYLLABLES.id)
       const m = SYLLABLES.rules.reduce((s, r) => s + patternMastery(cp, r.id), 0) / SYLLABLES.rules.length
       return { value: m, meta: `熟練 ${pct(m)}%` }
+    }
+    case 'talk': {
+      const max = DIALOGUES.length * 3
+      const n = talk.total(DIALOGUES.map((d) => d.id))
+      return { value: n / max, meta: `★ ${n} / ${max}` }
     }
     case 'build': {
       const n = game.progress.built.length

@@ -1,0 +1,64 @@
+/* ============================================================
+   對話咖啡廳：情境對話列表與對話頁
+   ============================================================ */
+.faint { color: var(--faint); }
+
+/* ---------- 列表 ---------- */
+.talk-total { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); margin: -8px 0 14px; }
+.talk-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 10px; }
+.talk-card {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; height: 100%;
+  padding: 14px 16px; border-radius: var(--radius); text-decoration: none;
+  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--isl);
+  transition: background 0.15s, border-color 0.15s;
+}
+.talk-card:hover { background: var(--surface-3); border-color: var(--isl); }
+.talk-card > .icon { color: var(--faint); }
+.talk-emoji { font-size: 2rem; line-height: 1; }
+.talk-card-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.talk-card-body strong { font-family: var(--font-display); font-size: 1.05rem; }
+.talk-card-body small { color: var(--isl); font-size: 0.7rem; letter-spacing: 0.1em; }
+.talk-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; font-size: 0.75rem; }
+
+/* ---------- 對話頁 ---------- */
+.talk-scene { max-width: 860px; }
+.talk-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 18px; }
+.talk-head .muted { margin-top: 6px; }
+.talk-head strong { color: var(--isl); }
+.talk-tools { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+.talk-log { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.bubble-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'who who' 'bubble btn'; gap: 4px 8px; max-width: 78%; align-items: center; }
+.bubble-row.you { align-self: flex-end; }
+.bubble-who { grid-area: who; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--faint); text-transform: uppercase; }
+.bubble-row.you .bubble-who { text-align: right; color: var(--isl); }
+.bubble { grid-area: bubble; padding: 10px 14px; border-radius: 14px 14px 14px 4px; background: var(--surface-2); border: 1px solid var(--line-2); }
+.bubble-row.you .bubble { border-radius: 14px 14px 4px 14px; background: color-mix(in srgb, var(--isl) 16%, var(--surface)); border-color: color-mix(in srgb, var(--isl) 55%, transparent); }
+.bubble-en { font-size: 1.05rem; font-weight: 600; }
+.bubble-zh { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+.bubble-row .icon-btn { grid-area: btn; }
+
+.talk-choices { display: flex; flex-direction: column; gap: 10px; border-top: 3px solid var(--isl); }
+.talk-choices .eyebrow { margin-bottom: 0; }
+.talk-options { display: flex; flex-direction: column; gap: 8px; }
+.talk-option-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.talk-option { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; font-size: 1rem; min-height: 52px; }
+.talk-option small { font-size: 0.82rem; font-weight: 400; }
+.talk-why {
+  display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius);
+  background: var(--ng-soft); border: 1px solid rgba(248, 113, 113, 0.35); font-size: 0.92rem;
+}
+.talk-why .icon { color: var(--ng); margin-top: 3px; }
+.talk-why strong { color: var(--ng); }
+
+.talk-done { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.talk-done .eyebrow { margin-bottom: 0; }
+
+@media (max-width: 640px) {
+  .talk-head { flex-direction: column; align-items: flex-start; }
+  .bubble-row { max-width: 92%; }
+  .bubble-en { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .talk-card { transition: none; }
+}
