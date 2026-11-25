@@ -1,5 +1,7 @@
 import { reactive, watch } from 'vue'
 import { ZONES, findZone } from '../data/zones.js'
+import { DAILY_WORDS } from '../data/dailyWords.js'
+import { assignDailyWords, todayNewWords } from '../logic/review.js'
 import {
   sanitizeProgress,
   completeActivity,
@@ -94,6 +96,15 @@ export const game = {
   },
   finishDaily(results) {
     return run({ kind: 'daily', results })
+  },
+  // 進「每日單字」時呼叫：今天還沒發新字就發 5 個（同一天重複呼叫不會再發）
+  startDailyWords() {
+    state.progress = assignDailyWords(state.progress, DAILY_WORDS, localDateString())
+    return todayNewWords(state.progress, DAILY_WORDS, localDateString())
+  },
+  get dailyWordsLeft() {
+    const assigned = new Set(state.progress.dailyLearned)
+    return DAILY_WORDS.filter((w) => !assigned.has(w.en)).length
   },
   // 今天是否已完成每日複習
   get dailyDone() {

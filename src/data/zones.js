@@ -3,6 +3,7 @@
 // 每個區域依序解鎖：前一區小測驗拿到至少 1 顆星就能前往下一區。
 // resource：在這個區域探索（完成挑戰）會獲得的主要物資。
 // pos 為地圖上的百分比座標。
+import { DAILY_WORDS } from './dailyWords.js'
 
 export const ZONES = [
   {
@@ -135,10 +136,13 @@ export const ZONES = [
 
 export const ALL_WORDS = ZONES.flatMap((zone) => zone.words.map((w) => ({ ...w, zoneId: zone.id })))
 
+// 區域單字 + 每日新單字：查字、錯題複習、每日測驗干擾選項都用這份
+export const WORD_BANK = [...ALL_WORDS, ...DAILY_WORDS]
+
 export function findZone(id) {
   return ZONES.find((z) => z.id === id) ?? null
 }
 
 export function findWord(en) {
-  return ALL_WORDS.find((w) => w.en === en) ?? null
+  return WORD_BANK.find((w) => w.en === en) ?? null
 }

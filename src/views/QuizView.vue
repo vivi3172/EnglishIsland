@@ -2,12 +2,14 @@
 // 同一個元件支援三種模式：
 // 1. 區域測驗（zone，有 id）：計算星星、解鎖下一區
 // 2. 錯題複習（review）：從錯題清單出題，答對換草藥
-// 3. 每日複習（daily）：從所有學過區域的單字疊加出題，每天第一次完成有食物與淡水
+// 3. 每日複習（daily）：今天的 5 個新字 + 所有學過的舊字疊加出題，每天第一次完成有食物與淡水
 import { computed, ref, watch } from 'vue'
-import { ZONES, ALL_WORDS, findZone, findWord } from '../data/zones.js'
+import { ZONES, ALL_WORDS, WORD_BANK, findZone, findWord } from '../data/zones.js'
+import { DAILY_WORDS } from '../data/dailyWords.js'
 import { game } from '../store/game.js'
 import { buildQuiz, starsForScore } from '../logic/quiz.js'
-import { learnedWords, pickDailyReview } from '../logic/review.js'
+import { buildDailySession } from '../logic/review.js'
+import { localDateString } from '../logic/progress.js'
 import { DAILY_REVIEW_BONUS } from '../logic/progress.js'
 import { speak } from '../utils/speech.js'
 import Icon from '../components/Icon.vue'
@@ -21,13 +23,14 @@ const isDaily = computed(() => props.mode === 'daily')
 const isReview = computed(() => props.mode !== 'zone') // 錯題或每日複習：沒有星星
 const zone = computed(() => (props.id ? findZone(props.id) : null))
 const allowed = computed(() => isReview.value || (zone.value && game.isUnlocked(zone.value.id)))
-const learnedCount = ref(0)
+const dailyInfo = ref({ fresh: 0, old: 0, learnedTotal: 0 })
 
 function sourceWords() {
   if (isDaily.value) {
-    const learned = learnedWords(game.progress, ZONES)
-    learnedCount.value = learned.length
-    return pickDailyReview(learned, game.progress)
+    game.startDailyWords() // 直接開網址進來也要先發今天的新字
+    const s = buildDailySession(game.progress, ZONES, DAILY_WORDS, localDateString())
+    dailyInfo.value = { fresh: s.fresh.length, old: s.old.length, learnedTotal: s.learnedTotal }
+    return [...s.fresh, ...s.old]
   }
   if (isReview.value) return Object.keys(game.progress.wrongWords).map(findWord).filter(Boolean)
   return zone.value?.words ?? []
@@ -45,7 +48,7 @@ const summary = ref(null)
 function start() {
   const words = sourceWords()
   // 干擾選項：區域測驗用同區單字（較有挑戰），複習或單字不足時用全部單字
-  const pool = !isReview.value && words.length >= 4 ? words : ALL_WORDS
+  const pool = !isReview.value && words.length >= 4 ? words : isDaily.value ? WORD_BANK : ALL_WORDS
   // 每日複習的字已經挑好數量，全部出題
   questions.value = buildQuiz(words, pool, isDaily.value ? words.length : QUIZ_LENGTH)
   index.value = 0
@@ -109,8 +112,8 @@ function optionClass(option) {
 <template>
   <section v-if="allowed" class="page">
     <MissionHeader
-      :back-to="zone ? { name: 'zone', params: { id: zone.id } } : '/'"
-      :back-label="zone ? zone.zh : '地圖'"
+      :back-to="zone ? { name: 'zone', params: { id: zone.id } } : isDaily ? '/daily' : '/'"
+      :back-label="zone ? zone.zh : isDaily ? '今日漂流瓶' : '地圖'"
       :title="title"
       :code="code"
       :current="summary ? questions.length : index"
@@ -119,15 +122,15 @@ function optionClass(option) {
     />
 
     <p v-if="isDaily && questions.length && !summary && index === 0 && !picked" class="muted daily-note">
-      從已學過的 {{ learnedCount }} 個單字中挑出 {{ questions.length }} 題：答錯過的字優先，其次是最久沒複習的字。
+      <template v-if="dailyInfo.fresh">今天的 {{ dailyInfo.fresh }} 個新字 + </template>從已學過的單字中挑 {{ dailyInfo.old }} 個舊字（共累積 {{ dailyInfo.learnedTotal }} 個）：答錯過的字優先，其次是最久沒複習的字。
       <span v-if="!game.dailyDone">今天第一次完成可額外取得食物 +{{ DAILY_REVIEW_BONUS.food }}、淡水 +{{ DAILY_REVIEW_BONUS.water }}。</span>
     </p>
 
     <div v-if="questions.length === 0" class="empty-state">
       <template v-if="isDaily">
         <Icon name="book" :size="32" />
-        <p>還沒有學過的單字。</p>
-        <p class="muted">先到地圖上的區域翻完單字卡，學過的單字每天都會疊加進每日複習。</p>
+        <p>還沒有可以複習的單字。</p>
+        <p class="muted">到地圖上的區域翻完單字卡，或打開今天的漂流瓶，學過的單字每天都會疊加進每日複習。</p>
       </template>
       <template v-else>
         <Icon name="check" :size="32" />

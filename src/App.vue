@@ -1,20 +1,19 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { game } from './store/game.js'
-import { ZONES, findWord } from './data/zones.js'
-import { learnedWords } from './logic/review.js'
+import { findWord } from './data/zones.js'
 import { STATS } from './data/survival.js'
 import Icon from './components/Icon.vue'
 import SurvivalPanel from './components/SurvivalPanel.vue'
 
 const reviewCount = computed(() => Object.keys(game.progress.wrongWords).filter(findWord).length)
-// 有學過的單字、且今天還沒做每日複習時，導覽列亮提示
-const dailyPending = computed(() => !game.dailyDone && learnedWords(game.progress, ZONES).length > 0)
+// 今天還沒做每日單字測驗時，導覽列亮提示（每天都有新的漂流瓶）
+const dailyPending = computed(() => !game.dailyDone)
 const low = (v) => v <= 25
 
 const NAV = [
   { to: '/', icon: 'map', label: '地圖', exact: true },
-  { to: '/daily', icon: 'retry', label: '每日複習', daily: true },
+  { to: '/daily', icon: 'retry', label: '每日單字', daily: true },
   { to: '/review', icon: 'notes', label: '錯題複習', badge: true },
   { to: '/build', icon: 'hammer', label: '建造' },
   { to: '/phonics', icon: 'hand', label: '自然發音', prefix: '/phonics' },
@@ -44,7 +43,7 @@ onMounted(() => game.tick())
           <Icon :name="item.icon" />
           <span>{{ item.label }}</span>
           <b v-if="item.badge && reviewCount" class="count">{{ reviewCount }}</b>
-        <b v-if="item.daily && dailyPending" class="count" title="今天還沒複習">!</b>
+        <b v-if="item.daily && dailyPending" class="count" title="今天的新單字還沒學">!</b>
         </router-link>
       </nav>
       <SurvivalPanel />
@@ -79,7 +78,7 @@ onMounted(() => game.tick())
         <Icon :name="item.icon" :size="20" />
         <span>{{ item.label }}</span>
         <b v-if="item.badge && reviewCount" class="count">{{ reviewCount }}</b>
-        <b v-if="item.daily && dailyPending" class="count" title="今天還沒複習">!</b>
+        <b v-if="item.daily && dailyPending" class="count" title="今天的新單字還沒學">!</b>
       </router-link>
     </nav>
   </div>

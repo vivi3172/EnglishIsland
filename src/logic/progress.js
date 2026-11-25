@@ -43,10 +43,17 @@ export function createInitialProgress() {
     wrongWords: {}, // { [en]: 答錯次數 }
     wordLog: {}, // { [en]: 'YYYY-MM-DD' 最後一次作答日 }，每日複習用來輪替
     dailyReviewDate: null, // 最後一次完成每日複習的日期
+    dailyNew: null, // { date: 'YYYY-MM-DD', words: [en] } 今天發的新單字
+    dailyLearned: [], // 所有發過的每日新單字（en），疊加進每日複習
     faints: 0,
     rescuedDay: null,
     introSeen: false,
   }
+}
+
+function sanitizeDailyNew(d, date) {
+  if (!date(d.date) || !Array.isArray(d.words)) return null
+  return { date: d.date, words: d.words.filter((x) => typeof x === 'string') }
 }
 
 // 讀取 localStorage 的資料時使用：舊版本或格式錯誤就重新開始
@@ -69,6 +76,8 @@ export function sanitizeProgress(raw) {
     wrongWords: obj(raw.wrongWords),
     wordLog: Object.fromEntries(Object.entries(obj(raw.wordLog)).filter(([, v]) => date(v))),
     dailyReviewDate: date(raw.dailyReviewDate),
+    dailyNew: sanitizeDailyNew(obj(raw.dailyNew), date),
+    dailyLearned: Array.isArray(raw.dailyLearned) ? [...new Set(raw.dailyLearned.filter((x) => typeof x === 'string'))] : [],
     faints: num(raw.faints, 0),
     rescuedDay: Number.isFinite(raw.rescuedDay) ? raw.rescuedDay : null,
     introSeen: raw.introSeen === true,

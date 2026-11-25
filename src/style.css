@@ -528,3 +528,32 @@ h1, h2, h3, p { margin: 0; }
   .tile { width: 40px; height: 46px; font-size: 1.2rem; }
   .page-title { font-size: 1.35rem; }
 }
+
+/* ---------- 每日單字：漂流瓶 ---------- */
+.daily-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 18px; max-width: 520px; }
+.daily-stats div { padding: 10px 12px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--line); }
+.daily-stats dt { font-size: 0.75rem; color: var(--muted); }
+.daily-stats dd { margin: 2px 0 0; font-size: 1.3rem; font-weight: 700; }
+.bottle-row { list-style: none; padding: 0; margin-top: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.bottle { width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 6px 12px; cursor: pointer;
+  border-radius: var(--radius); border: 1px dashed var(--line-2); background: var(--surface-2); color: var(--text); font: inherit;
+  animation: bottle-bob 3s ease-in-out infinite; animation-delay: calc(var(--i) * -0.6s);
+}
+.bottle:hover, .bottle:focus-visible { border-color: var(--accent); }
+.bottle.opened { animation: none; border-style: solid; border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+.bottle.now { background: color-mix(in srgb, var(--accent) 14%, var(--surface-2)); border-color: var(--accent); }
+.bottle-glyph { font-size: 2rem; line-height: 1; }
+.bottle-label { font-family: var(--font-mono); font-size: 0.85rem; overflow-wrap: anywhere; text-align: center; }
+@keyframes bottle-bob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .bottle { animation: none; } }
+.bottle-card { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 16px; }
+.bottle-card .card-glyph { font-size: 3rem; line-height: 1; }
+.bottle-card-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.bottle-card-word { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; }
+.bottle-hint { margin-bottom: 16px; }
+.daily-go { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border-top: 3px solid var(--accent); }
+@media (max-width: 640px) {
+  .bottle-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bottle-card { flex-direction: column; }
+}
