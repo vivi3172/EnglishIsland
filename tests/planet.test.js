@@ -60,7 +60,7 @@ describe('PLANET_ISLANDS', () => {
     const ids = PLANET_ISLANDS.map((i) => i.id)
     expect(new Set(ids).size).toBe(ids.length)
     for (const z of ZONES) expect(ids).toContain(z.id)
-    expect(ids).toEqual(expect.arrayContaining(['daily', 'talk', 'review', 'phonics', 'syllables', 'build']))
+    expect(ids).toEqual(expect.arrayContaining(['daily', 'talk', 'review', 'phonics', 'syllables', 'tenses', 'build']))
   })
   it('spreads islands around the whole planet', () => {
     const lons = PLANET_ISLANDS.map((i) => i.lon).sort((a, b) => a - b)

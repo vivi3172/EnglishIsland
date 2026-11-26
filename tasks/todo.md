@@ -1,3 +1,48 @@
+# 2026-11-26 英文 12 時態攻略（Tense Explorer）
+
+## 整合方式（分析結果）
+- 沿用既有模組模式（對話咖啡廳 / phonics）：資料 `src/data/tenses/` → 純函式 `src/logic/tense.js`（vitest）→ 獨立存檔 `src/store/tenses.js`（key `english-island-tenses`）→ 頁面 `src/views/tenses/` → 樣式 `src/tense.css`。
+- 不加套件；動畫用 SVG + CSS transition；朗讀沿用 Web Speech（speech.js 新增 `speakTracked`，原函式不動）；跟讀沿用 `recognition.js`。
+- 教學模型：3 時間 × 4 動作狀態；時態 key = `${time}-${aspect}`。結構性內容（公式、助動詞說明、使用情境、易混淆）放 `FORMS`，情境內容（例句、翻譯、語感、時間軸標籤）放各情境檔 → 新增情境不用改元件。
+- 例句標記：`[助動詞]`、`<主要動詞>`、`{時間提示詞}`，由 `parseSentence` 解析上色。
+
+## 頁面 / 路由
+- `/tenses` 首頁：六階段學習路徑 + 12 時態矩陣 + 進度摘要
+- `/tenses/basics/time`、`/tenses/basics/aspect`：階段 1、2
+- `/tenses/explore`：探索器（時間 × 狀態切換，10 項內容同步）
+- `/tenses/rhythm`：節奏口訣 + 連續朗讀 + 逐字高亮 + 跟讀
+- `/tenses/compare`：雙時態比較（5 組預設 + 自選）
+- `/tenses/quiz/:mode`：看圖選時態、聽力辨識、動詞填空、句型組合、時態轉換、情境造句、綜合、弱項
+- `/tenses/progress`：各時態熟練度、正確率、錯題
+- 星球新增「時光島」、導覽列「12 時態」
+
+## 驗收條件
+- [x] 12 種時態切換時間軸、插畫、例句、翻譯、語感、動詞變化、公式、發音、使用情境、易混淆同步更新
+- [x] 時間軸平滑動畫；減少動畫（系統設定 + 模組內開關）時無動畫
+- [x] 例句助動詞 / 主要動詞 / 時間詞分色，且不只靠顏色（底線樣式 + 圖例文字）
+- [x] 比較模式、節奏播放、六種練習 + 錯題解析（時間、狀態、助動詞、其他時態為何不適合）
+- [x] 進度存 localStorage，舊 / 壞存檔不 crash
+- [x] 既有功能與存檔不受影響
+
+## 驗證
+- [x] `npm test`：每句助動詞 / 動詞形式符合時態（自動比對）、時間軸 12 種形狀不重複、每句都能被 detectTense 認回自己、出題與判分、存檔 sanitize、`wordIndexAt`
+- [x] `npm run build`
+- [x] 瀏覽器：走過所有新路由 + 既有路由、做完一輪練習、存檔寫入、390px 無橫向捲動、console 無 error/warn
+
+## Results
+- 新增：`src/data/tenses/{index,grandma,homework}.js`、`src/logic/tense.js`、`src/store/tenses.js`、`src/components/tenses/*`（TenseTimeline、TenseScene、TenseSentence、TenseMatrix、TenseTag、useSpeaker）、`src/views/tenses/*`（Home、Basics、Explorer、Player、Comparison、Quiz、Progress）、`src/tense.css`、`tests/tense.test.js`。
+- 修改：`main.js`（7 條路由）、`App.vue`（導覽「12 時態」）、`data/planet.js`（時光島，13 座島）、`IslandMap.vue`（島嶼進度）、`speech.js`（新增 `speakTracked`，原函式不動）、`Icon.vue`（clock、pause）、`style.css`（手機底部導覽 7 項不換行）、`tests/planet.test.js`、README。
+- 驗證：`npm test` 10 檔 / 167 測試全過；`npm run build` 成功；agent-browser（新開 5180 dev server）：探索器切到過去完成進行式（泛黃相片、時鐘、箭頭到「我抵達時」、存檔 seen）、節奏播放逐字高亮與換句、看圖選時態答錯 / 答對判分正確且寫入存檔、填空答錯顯示四段解析、進度頁錯題清單、減少動畫開關與系統 reduced-motion 都讓 animation = none、17 條路由（新 + 既有）在 390px 無橫向捲動、360px 底部導覽不換行、console 無 error/warn。
+- 過程中修正：時態說明寫死 cooked / Grandma（莉莉的題目會講錯，已改為中性並加測試 tripwire）；無語音時朗讀瞬間結束導致高亮不動（改為估算時間 fallback）；日曆蓋到奶奶的頭；句尾句點被當成時間詞底線。
+- 未驗證：實際 TTS 聲音與 boundary 事件的逐字同步（headless 無語音，只驗證了估算 fallback）；真機麥克風跟讀；觸控裝置實測。
+- 已知限制：句型組合只接受原句語序（例如 already 放句尾雖然也通順，但會判錯）；情境造句只檢查助動詞 + 動詞，不檢查其他文法；5 組比較說明以奶奶情境為例（切到莉莉時會標示「以奶奶煮飯為例」）。
+
+## Risk & Rollback
+- 風險：低。新增模組；既有檔案只動路由、導覽、星球資料、speech.js（新增函式）、Icon（新圖示）。
+- Rollback：revert commit；新存檔 key 獨立。
+
+---
+
 # 2026-11-25 加多益入門單字 + 情境對話練習
 
 ## 目標 / 驗收條件

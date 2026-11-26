@@ -37,6 +37,8 @@ const ICONS = {
   play: '<path d="m7 4 13 8-13 8z"/>',
   chart: '<path d="M3 3v18h18"/><path d="M8 16v-5M13 16V8M18 16V6"/>',
   layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
   spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
 }
 

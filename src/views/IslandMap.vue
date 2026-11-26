@@ -14,6 +14,7 @@ import { project, rotationFor, frontIndex, stepIndex } from '../logic/planet.js'
 import { game } from '../store/game.js'
 import { phonics } from '../store/phonics.js'
 import { talk } from '../store/talk.js'
+import { tenses } from '../store/tenses.js'
 import { DIALOGUES } from '../data/dialogues.js'
 import Icon from '../components/Icon.vue'
 import SurvivalPanel from '../components/SurvivalPanel.vue'
@@ -54,6 +55,10 @@ function statusOf(isl) {
       const max = DIALOGUES.length * 3
       const n = talk.total(DIALOGUES.map((d) => d.id))
       return { value: n / max, meta: `★ ${n} / ${max}` }
+    }
+    case 'tenses': {
+      const o = tenses.overall()
+      return { value: o.mastery, meta: `探索 ${o.seen} / 12 · 熟練 ${pct(o.mastery)}%` }
     }
     case 'build': {
       const n = game.progress.built.length

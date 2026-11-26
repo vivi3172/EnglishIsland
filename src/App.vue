@@ -15,6 +15,7 @@ const NAV = [
   { to: '/', icon: 'map', label: '星球', exact: true },
   { to: '/daily', icon: 'retry', label: '每日單字', daily: true },
   { to: '/talk', icon: 'chat', label: '情境對話' },
+  { to: '/tenses', icon: 'clock', label: '12 時態', prefix: '/tenses' },
   { to: '/review', icon: 'notes', label: '錯題複習', badge: true },
   { to: '/build', icon: 'hammer', label: '建造' },
   { to: '/phonics', icon: 'hand', label: '自然發音', prefix: '/phonics' },

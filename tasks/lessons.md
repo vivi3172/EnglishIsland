@@ -36,3 +36,19 @@
 - **根因**：pointerup 時設 `suppressClick = true`，預期拖曳結束一定會跟著一個 click 把旗標清掉；但滑鼠移動過後 down／up 不在同一元素時瀏覽器不送 click，旗標殘留。
 - **預防規則**：這類「只影響下一個事件」的旗標一定要有自動到期（`setTimeout(() => flag = false, 0)`）或在下一次 pointerdown 重設；瀏覽器驗證要測「拖曳 → 再點一下」這個順序。
 - **Tripwire**：`grep -n "suppressClick = true" -A2 src/views/*.vue` 每一處都要看到同時排程清除。
+
+## 2026-11-26 多情境共用的說明文字寫死了某一個情境的例子
+
+- **類型**：incorrect assumption（假設錯誤）
+- **現象**：12 時態的 `FORMS[key].auxWhy` 寫著「後面的 cooked 是過去分詞」「Grandma 用 is」，但這些說明會出現在每個情境；莉莉寫功課（do / did / done）的題目解析會講錯動詞。
+- **根因**：先只做奶奶情境時寫說明，之後才加第二個情境，沒回頭檢查共用文字。
+- **預防規則**：資料驅動的共用內容不可提到單一情境的名詞或動詞；要舉例就每個情境都舉（cook → cooks、do → does）。
+- **Tripwire**：`tests/tense.test.js` 的 `keeps shared auxiliary explanations neutral across scenarios`（已確認舊文字會讓它失敗）。
+
+## 2026-11-26 沒有語音時 speechSynthesis 會「瞬間唸完」
+
+- **類型**：environment-dependent
+- **現象**：headless 瀏覽器（以及沒有英文語音的裝置）有 speechSynthesis 但沒有 voice，utterance 立刻 end / error，逐字高亮不動、節奏播放一下就跳到下一句。
+- **預防規則**：依賴 onend 計時的功能，要分辨「被我們 cancel（interrupted / canceled）」和「根本沒唸」；後者改用估算時間跑完。
+- **Tripwire**：瀏覽器驗證時用 `speechSynthesis.getVoices().length` 確認是否有語音，並抽樣 `.ts-w.now` 是否逐字前進。
+- **工具提醒**：寫入含反引號的 Markdown 時用 Write / Edit，不要經過 bash 字串（反引號會被當成指令替換）。
