@@ -1,9 +1,28 @@
 // 使用瀏覽器內建語音合成朗讀英文；不支援時安靜失敗。
 export const speechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window
 
-function pickVoice() {
-  const voices = window.speechSynthesis.getVoices()
+// 優先使用女聲。Web Speech API 沒有「性別」欄位，只能依語音名稱判斷；
+// 越前面越優先（自然語音音質較好排前面）。都找不到就退回任一英文語音。
+//   Windows Edge：Aria / Jenny / Michelle（Natural）  Chrome：Google US English、Zira
+//   macOS / iOS：Samantha、Allison、Ava、Susan、Karen、Moira、Tessa、Serena
+const FEMALE_VOICES = [
+  'Aria', 'Jenny', 'Michelle', 'Ana', 'Google US English', 'Samantha', 'Allison', 'Ava', 'Susan', 'Zira',
+  'Google UK English Female', 'Libby', 'Sonia', 'Hazel', 'Karen', 'Moira', 'Tessa', 'Serena', 'Fiona', 'Victoria',
+]
+
+const hasName = (voice, name) => new RegExp(`\\b${name}\\b`, 'i').test(voice.name ?? '')
+
+export function chooseVoice(voices) {
+  const english = voices.filter((v) => v.lang?.replace('_', '-').startsWith('en') && !/\bmale\b/i.test(v.name ?? ''))
+  for (const name of FEMALE_VOICES) {
+    const hit = english.find((v) => v.lang?.replace('_', '-') === 'en-US' && hasName(v, name)) ?? english.find((v) => hasName(v, name))
+    if (hit) return hit
+  }
   return voices.find((v) => v.lang === 'en-US') ?? voices.find((v) => v.lang?.startsWith('en')) ?? null
+}
+
+function pickVoice() {
+  return chooseVoice(window.speechSynthesis.getVoices())
 }
 
 export function speak(text, { rate = 0.8 } = {}) {
